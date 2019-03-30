@@ -24,6 +24,11 @@ public class Centro {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	@Override
+	public String toString() {
+		return "Centro [x=" + x + ", y=" + y + "]";
+	}
 	
 	
 }
