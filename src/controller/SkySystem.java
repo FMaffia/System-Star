@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.File;
+import java.io.IOException;
 
 import model.Centro;
 import model.Nodo;
@@ -28,6 +29,7 @@ public class SkySystem extends PApplet {
 		this.sky();
 		this.start(root);
 		disegnaSatelliti(nodoBase);
+
 	}
 	public void draw() {
 	}
@@ -48,29 +50,29 @@ public class SkySystem extends PApplet {
 		}
 		float a = 0;
 		for(int i = 0; i < sottoCartelle.length; i++ ) {
-//			if(prendiEstenzione(sottoCartelle[i]).equals(".DS_Store") == true) {
-//				satelliteFiglio.setNodo(null);
-//			} else {
-			    Nodo satelliteFiglio = new Nodo();
-				float angle = PApplet.radians(a);
-				float x = satellite.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.cos(angle));
-				float y = satellite.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.sin(angle);
-				satelliteFiglio.setNodo(sottoCartelle[i]);
-				satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
-				Centro centroSatellite = new Centro(x,y);
-				satelliteFiglio.setCentroNodo(centroSatellite);
-				if (sottoCartelle[i].isDirectory()) {
-					disegnaLinea(satellite, satelliteFiglio);
-					disegnaSatelliti(satelliteFiglio);
-					calcolaCentriSatelliti(satelliteFiglio.getSottoCartelle(),satelliteFiglio);
-				} else {
-					disegnaLinea(satellite, satelliteFiglio);
-					disegnaSatelliti(satelliteFiglio);
-				}
-				a = a + this.periodo;
+			//			if(prendiEstenzione(sottoCartelle[i]).equals(".DS_Store") == true) {
+			//				satelliteFiglio.setNodo(null);
+			//			} else {
+			Nodo satelliteFiglio = new Nodo();
+			float angle = PApplet.radians(a);
+			float x = satellite.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.cos(angle));
+			float y = satellite.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.sin(angle);
+			satelliteFiglio.setNodo(sottoCartelle[i]);
+			satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
+			Centro centroSatellite = new Centro(x,y);
+			satelliteFiglio.setCentroNodo(centroSatellite);
+			if (sottoCartelle[i].isDirectory()) {
+				disegnaLinea(satellite, satelliteFiglio);
+				disegnaSatelliti(satelliteFiglio);
+				calcolaCentriSatelliti(satelliteFiglio.getSottoCartelle(),satelliteFiglio);
+			} else {
+				disegnaLinea(satellite, satelliteFiglio);
+				disegnaSatelliti(satelliteFiglio);
 			}
+			a = a + this.periodo;
+			System.out.println(sottoCartelle[i].getPath());
 		}
-
+	}
 
 	public void disegnaSatelliti(Nodo nodo) {
 		noFill();
@@ -111,6 +113,19 @@ public class SkySystem extends PApplet {
 		}
 	}
 
-
-
+	public static String scansionaDirectory(File dir) {
+		String result = "";
+        File[] elementi = dir.listFiles();
+        if (elementi == null) {
+        	return null;
+        }
+        for (File file : elementi) {
+            if (file.isDirectory()) {
+                result += scansionaDirectory(file);
+            } else {
+           		result += file + "\n";
+            }
+        }
+        return result;
+    }
 }
