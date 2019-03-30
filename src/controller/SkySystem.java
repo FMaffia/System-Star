@@ -12,12 +12,12 @@ public class SkySystem extends PApplet {
 	private File root = new File(Costanti.PATH);
 	Nodo nodoBase = new Nodo();
 	private float periodo;
+	private int livello = 0;
 
 
 	public static void main(String[] args) {
 		PApplet.main("controller.SkySystem");
 	}
-
 
 	public void settings(){
 		size(Costanti.WIDTH, Costanti.HEIGHT);
@@ -30,36 +30,35 @@ public class SkySystem extends PApplet {
 		disegnaSatelliti(nodoBase);
 	}
 	public void draw() {
-
 	}
-	
+
 	public void start(File rootFile) {
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
 		nodoBase.setCentroNodo(centroRoot);
 		nodoBase.setNodo(rootFile);
 		File[] sottoCartelle = nodoBase.getNodo().listFiles();
 		nodoBase.setSottoCartelle(sottoCartelle);
-		
 		disegnaSatelliti(nodoBase);
 		calcolaCentriSatelliti(sottoCartelle,nodoBase);
 	}
 
 	public void calcolaCentriSatelliti(File[] sottoCartelle, Nodo satellite) {
-
 		if(sottoCartelle.length > 0) {
 			periodo = 360/sottoCartelle.length;
 		}
 		float a = 0;
 		for(int i = 0; i < sottoCartelle.length; i++ ) {
-			float angle = PApplet.radians(a);
-			float x = satellite.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.cos(angle));
-			float y = satellite.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.sin(angle);
-			Nodo satelliteFiglio = new Nodo();
-			satelliteFiglio.setNodo(sottoCartelle[i]);
-			satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
-			Centro centroSatellite = new Centro(x,y);
-			satelliteFiglio.setCentroNodo(centroSatellite);
-				
+//			if(prendiEstenzione(sottoCartelle[i]).equals(".DS_Store") == true) {
+//				satelliteFiglio.setNodo(null);
+//			} else {
+			    Nodo satelliteFiglio = new Nodo();
+				float angle = PApplet.radians(a);
+				float x = satellite.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.cos(angle));
+				float y = satellite.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.sin(angle);
+				satelliteFiglio.setNodo(sottoCartelle[i]);
+				satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
+				Centro centroSatellite = new Centro(x,y);
+				satelliteFiglio.setCentroNodo(centroSatellite);
 				if (sottoCartelle[i].isDirectory()) {
 					disegnaLinea(satellite, satelliteFiglio);
 					disegnaSatelliti(satelliteFiglio);
@@ -71,6 +70,7 @@ public class SkySystem extends PApplet {
 				a = a + this.periodo;
 			}
 		}
+
 
 	public void disegnaSatelliti(Nodo nodo) {
 		noFill();
@@ -85,20 +85,20 @@ public class SkySystem extends PApplet {
 		if(nodo.getNodo().isDirectory()) {
 			text(nodo.getNodo().listFiles().length,nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());
 		} else {
-			text(prendiEstensione(nodo),nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());			
+			text(prendiEstenzione(nodo.getNodo()),nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());			
 		}
 	}
 
-	private String prendiEstensione(Nodo nodo) {
-		return nodo.getNodo().getName().substring(nodo.getNodo().getName().lastIndexOf("."));
+	private String prendiEstenzione(File file) {
+		return file.getName().substring(file.getName().lastIndexOf("."));
 	}
-
 
 	public void disegnaLinea(Nodo satellitePadre, Nodo satelliteFiglio) {
 		stroke(255);
+		strokeWeight(1);
 		line(satellitePadre.getCentroNodo().getX(), satellitePadre.getCentroNodo().getY(), satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
 	}
-	
+
 	public void sky() {
 		for(int x = 0; x < 300; x++) {
 			if(x%2 == 0) {
