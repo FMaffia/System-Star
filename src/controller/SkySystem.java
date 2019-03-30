@@ -38,25 +38,40 @@ public class SkySystem extends PApplet {
 		File[] sottoCartelle = nodoBase.getNodo().listFiles();
 		nodoBase.setSottoCartelle(sottoCartelle);
 		this.disegnaDirectory(nodoBase);
-		plottaSottoCartelle(sottoCartelle,nodoBase);
+		calcolaCentriSatelliti(sottoCartelle,nodoBase);
 	}
-	
-	private void plottaSottoCartelle(File[] sottoCartelle, Nodo nodoBase) {
-		for (int x = 0; x < sottoCartelle.length; x++) {
-			Nodo satellite = new Nodo();
-			//Centro centroSatellite = new Centro(,Costanti.CENTRO_QUADRO_Y);
 
+	
+	public void calcolaCentriSatelliti(File[] sottoCartelle, Nodo nodoCorrente) {
+		float periodo = TWO_PI/sottoCartelle.length;
+		float a = 0;
+		for(int i = 0; i < sottoCartelle.length; i++ ) {
+			a = a + periodo;
+			float angle = PApplet.radians(a);
+			float x = nodoCorrente.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.sin(angle));
+			float y = nodoCorrente.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.cos(angle);
+			Nodo satellite = new Nodo();
+			Centro centroSatellite = new Centro(x,y);
+			satellite.setCentroNodo(centroSatellite);
+			satellite.setNodo(sottoCartelle[i]);
+			satellite.setSottoCartelle(sottoCartelle[i].listFiles());
+			if (sottoCartelle[i].isDirectory()) {
+				disegnaDirectory(satellite);
+				calcolaCentriSatelliti(satellite.getSottoCartelle(),satellite);
+			} 
 		}
 	}
+	
+
 
 
 	public void disegnaDirectory(Nodo nodo) {
 		noFill();
 		stroke(255);
-		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.DIAMETRO_NODO_ROOT, Costanti.DIAMETRO_NODO_ROOT);
+		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.RAGGIO_ROOT, Costanti.RAGGIO_ROOT);
 		stroke(250,12,129);
 		fill(0);
-		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.DIAMETRO_NODO_ROOT-10, Costanti.DIAMETRO_NODO_ROOT-10);
+		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.RAGGIO_ROOT-10, Costanti.RAGGIO_ROOT-10);
 		textAlign(CENTER,CENTER);
 		textSize(13);
 		fill(255);
