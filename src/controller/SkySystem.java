@@ -12,7 +12,6 @@ public class SkySystem extends PApplet {
 
 	private File root = new File(Costanti.PATH);
 	Nodo nodoBase = new Nodo();
-	private float periodo;
 	private int livello = 0;
 
 
@@ -45,18 +44,26 @@ public class SkySystem extends PApplet {
 	}
 
 	public void calcolaCentriSatelliti(File[] sottoCartelle, Nodo satellite) {
+		float periodo = 0;
+		float a = 0;
+		float raggio = 0;
 		if(sottoCartelle.length > 0) {
 			periodo = 360/sottoCartelle.length;
 		}
-		float a = 0;
 		for(int i = 0; i < sottoCartelle.length; i++ ) {
 			//			if(prendiEstenzione(sottoCartelle[i]).equals(".DS_Store") == true) {
 			//				satelliteFiglio.setNodo(null);
 			//			} else {
 			Nodo satelliteFiglio = new Nodo();
 			float angle = PApplet.radians(a);
-			float x = satellite.getCentroNodo().getX() + ((Costanti.RAGGIO_ORBITA) * PApplet.cos(angle));
-			float y = satellite.getCentroNodo().getY() + ((Costanti.RAGGIO_ORBITA)) * PApplet.sin(angle);
+			if(sottoCartelle[i].isDirectory()) {
+				raggio = Costanti.RAGGIO_ORBITA + 100;
+			}
+			else {
+				raggio = Costanti.RAGGIO_ORBITA;
+			}
+			float x = satellite.getCentroNodo().getX() + ((raggio) * PApplet.cos(angle));
+			float y = satellite.getCentroNodo().getY() + ((raggio) * PApplet.sin(angle));
 			satelliteFiglio.setNodo(sottoCartelle[i]);
 			satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
 			Centro centroSatellite = new Centro(x,y);
@@ -69,8 +76,7 @@ public class SkySystem extends PApplet {
 				disegnaLinea(satellite, satelliteFiglio);
 				disegnaSatelliti(satelliteFiglio);
 			}
-			a = a + this.periodo;
-			System.out.println(sottoCartelle[i].getPath());
+			a = a + periodo;
 		}
 	}
 
@@ -113,19 +119,4 @@ public class SkySystem extends PApplet {
 		}
 	}
 
-	public static String scansionaDirectory(File dir) {
-		String result = "";
-        File[] elementi = dir.listFiles();
-        if (elementi == null) {
-        	return null;
-        }
-        for (File file : elementi) {
-            if (file.isDirectory()) {
-                result += scansionaDirectory(file);
-            } else {
-           		result += file + "\n";
-            }
-        }
-        return result;
-    }
 }
