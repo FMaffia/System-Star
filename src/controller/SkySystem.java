@@ -23,23 +23,33 @@ public class SkySystem extends PApplet {
 	public void setup(){
 		background(0);
 		this.sky();
-		this.start();
+		this.start(root);
 	}
 	public void draw() {
 		
 	}
 
 	
-	public void start() {
+	public void start(File rootFile) {
 		Nodo nodoBase = new Nodo();
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
 		nodoBase.setCentroNodo(centroRoot);
-		nodoBase.setNodo(root);
-		nodoBase.setSottoCartelle(nodoBase.getNodo().listFiles());
-		disegnaDirectory(nodoBase);
-		System.out.println(nodoBase);
+		nodoBase.setNodo(rootFile);
+		File[] sottoCartelle = nodoBase.getNodo().listFiles();
+		nodoBase.setSottoCartelle(sottoCartelle);
+		this.disegnaDirectory(nodoBase);
+		plottaSottoCartelle(sottoCartelle,nodoBase);
 	}
 	
+	private void plottaSottoCartelle(File[] sottoCartelle, Nodo nodoBase) {
+		for (int x = 0; x < sottoCartelle.length; x++) {
+			Nodo satellite = new Nodo();
+			//Centro centroSatellite = new Centro(,Costanti.CENTRO_QUADRO_Y);
+
+		}
+	}
+
+
 	public void disegnaDirectory(Nodo nodo) {
 		noFill();
 		stroke(255);
