@@ -10,7 +10,6 @@ import utility.Costanti;
 public class SkySystem extends PApplet {
 
 	private File root = new File(Costanti.PATH);
-	private Nodo nodoBase;
 	
 	public static void main(String[] args) {
 		PApplet.main("controller.SkySystem");
@@ -23,17 +22,24 @@ public class SkySystem extends PApplet {
 
 	public void setup(){
 		background(0);
-		sky();
-		nodoBase = new Nodo();
+		this.sky();
+		this.start();
+	}
+	public void draw() {
+		
+	}
+
+	
+	public void start() {
+		Nodo nodoBase = new Nodo();
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
 		nodoBase.setCentroNodo(centroRoot);
 		nodoBase.setNodo(root);
-		System.out.println(nodoBase.getNodo().listFiles().length);
+		nodoBase.setSottoCartelle(nodoBase.getNodo().listFiles());
 		disegnaDirectory(nodoBase);
+		System.out.println(nodoBase);
 	}
-	public void draw() {
-	}
-
+	
 	public void disegnaDirectory(Nodo nodo) {
 		noFill();
 		stroke(255);
