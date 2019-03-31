@@ -2,6 +2,12 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import model.Centro;
 import model.Nodo;
@@ -12,7 +18,7 @@ public class SkySystem extends PApplet {
 
 	private File root = new File(Costanti.PATH);
 	Nodo nodoBase = new Nodo();
-	private int livello = 0;
+	private int  profonditaROOT;
 
 
 	public static void main(String[] args) {
@@ -25,13 +31,12 @@ public class SkySystem extends PApplet {
 
 	public void setup(){
 		background(0);
+		this.profonditaROOT = this.splitPath(this.root.getPath()).size();
 		this.sky();
 		this.start(root);
-		disegnaSatelliti(nodoBase);
-
+		disegnaSatelliti(nodoBase,1);
 	}
-	public void draw() {
-	}
+	public void draw() {}
 
 	public void start(File rootFile) {
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
@@ -39,7 +44,7 @@ public class SkySystem extends PApplet {
 		nodoBase.setNodo(rootFile);
 		File[] sottoCartelle = nodoBase.getNodo().listFiles();
 		nodoBase.setSottoCartelle(sottoCartelle);
-		disegnaSatelliti(nodoBase);
+		disegnaSatelliti(nodoBase,profonditaROOT);
 		calcolaCentriSatelliti(sottoCartelle,nodoBase);
 	}
 
@@ -47,46 +52,69 @@ public class SkySystem extends PApplet {
 		float periodo = 0;
 		float a = 0;
 		float raggio = 0;
+		int livello = 0;
+
+
 		if(sottoCartelle.length > 0) {
 			periodo = 360/sottoCartelle.length;
 		}
-		for(int i = 0; i < sottoCartelle.length; i++ ) {
-			//			if(prendiEstenzione(sottoCartelle[i]).equals(".DS_Store") == true) {
-			//				satelliteFiglio.setNodo(null);
-			//			} else {
+
+		List<File> listaFiles = this.filtraFile(sottoCartelle);
+		for(File f : listaFiles) {
 			Nodo satelliteFiglio = new Nodo();
 			float angle = PApplet.radians(a);
-			if(sottoCartelle[i].isDirectory()) {
-				raggio = Costanti.RAGGIO_ORBITA + 100;
+			
+			livello = this.calcolaLivello(f.getPath()); System.out.println("path: " + f.getPath() + "  livello = " + livello);
+			
+			if(f.isDirectory()) {
+				raggio = Costanti.RAGGIO + 100;
 			}
 			else {
-				raggio = Costanti.RAGGIO_ORBITA;
+				raggio = Costanti.RAGGIO + 50;
 			}
-			float x = satellite.getCentroNodo().getX() + ((raggio) * PApplet.cos(angle));
-			float y = satellite.getCentroNodo().getY() + ((raggio) * PApplet.sin(angle));
-			satelliteFiglio.setNodo(sottoCartelle[i]);
-			satelliteFiglio.setSottoCartelle(sottoCartelle[i].listFiles());
+			float x = satellite.getCentroNodo().getX() + ((raggio/livello) * PApplet.cos(angle));
+			float y = satellite.getCentroNodo().getY() + ((raggio/livello) * PApplet.sin(angle));
+			
+			satelliteFiglio.setNodo(f);
+			satelliteFiglio.setSottoCartelle(f.listFiles());
 			Centro centroSatellite = new Centro(x,y);
 			satelliteFiglio.setCentroNodo(centroSatellite);
-			if (sottoCartelle[i].isDirectory()) {
+			if (f.isDirectory()) {
 				disegnaLinea(satellite, satelliteFiglio);
-				disegnaSatelliti(satelliteFiglio);
+				disegnaSatelliti(satelliteFiglio,livello);
 				calcolaCentriSatelliti(satelliteFiglio.getSottoCartelle(),satelliteFiglio);
 			} else {
 				disegnaLinea(satellite, satelliteFiglio);
-				disegnaSatelliti(satelliteFiglio);
+				disegnaSatelliti(satelliteFiglio,livello);
 			}
 			a = a + periodo;
 		}
 	}
 
-	public void disegnaSatelliti(Nodo nodo) {
+	private int calcolaLivello(String pathString) {
+		int profonditaTOT = this.splitPath(pathString).size();
+		int profondita = profonditaTOT - this.profonditaROOT;
+		return profondita;
+	}
+
+	public List<String> splitPath(String pathString){
+		Path path = Paths.get(pathString);
+		return Arrays.asList(StreamSupport.stream(path.spliterator(), false).map(Path::toString)
+				.toArray(String[]::new));
+	}
+	public List<File> filtraFile(File[] sottoCartelle)
+	{
+		List<File> lista = Arrays.asList(sottoCartelle);
+		return lista.stream().filter(f -> !f.getName().toUpperCase().contains(("DS_STORE"))).collect(Collectors.toList());
+	}
+
+	public void disegnaSatelliti(Nodo nodo, int livello) {
 		noFill();
 		stroke(255);
-		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.RAGGIO_ROOT, Costanti.RAGGIO_ROOT);
+		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.RAGGIO/livello, Costanti.RAGGIO/livello);
 		stroke(250,12,129);
 		fill(0);
-		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), Costanti.RAGGIO_ROOT-10, Costanti.RAGGIO_ROOT-10);
+		ellipse(nodo.getCentroNodo().getX(), nodo.getCentroNodo().getY(), (Costanti.RAGGIO-10)/livello, (Costanti.RAGGIO-10)/livello);
 		textAlign(CENTER,CENTER);
 		textSize(13);
 		fill(255);
