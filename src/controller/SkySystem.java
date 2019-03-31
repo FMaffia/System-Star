@@ -34,6 +34,7 @@ public class SkySystem extends PApplet {
 
 	public void settings(){
 		size(Costanti.WIDTH, Costanti.HEIGHT);
+		smooth();
 
 	}
 
@@ -46,7 +47,13 @@ public class SkySystem extends PApplet {
 		titolo();
 		disegnaSatelliti(nodoBase,1);
 	}
-	public void draw() {}
+	public void draw() {
+		if(mousePressed == true && mouseX > Costanti.WIDTH - 50 && mouseX < Costanti.WIDTH && mouseY > Costanti.HEIGHT - 30 && mouseY < Costanti.HEIGHT) {
+			saveImagine();
+			System.out.println("salva");
+		}
+		
+	}
 
 	public void start(File rootFile) {
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
@@ -63,7 +70,6 @@ public class SkySystem extends PApplet {
 		float a = 0;
 		float raggio = 0;
 		int livello = 0;
-
 		if(sottoCartelle.length > 0) {
 			periodo = 360/sottoCartelle.length;
 		}
@@ -131,11 +137,11 @@ public class SkySystem extends PApplet {
 		textSize(13);
 		fill(255, 255 - 20*livello);
 		if(Costanti.CLEAN == false) {
-		if(nodo.getNodo().isDirectory()) {
-			text(nodo.getNodo().listFiles().length,nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());
-		} else {
-			text(prendiEstenzione(nodo.getNodo()),nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());			
-		}
+			if(nodo.getNodo().isDirectory()) {
+				text(nodo.getNodo().listFiles().length,nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());
+			} else {
+				text(prendiEstenzione(nodo.getNodo()),nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());			
+			}
 		}
 	}
 
@@ -170,8 +176,13 @@ public class SkySystem extends PApplet {
 		textAlign(CENTER);
 		textFont(font);
 		text("System Star: " + totFile + " files - 31/03/2019" ,0,Costanti.HEIGHT - 20,Costanti.WIDTH,Costanti.HEIGHT - 20);
+		fill(250,12,129,255);
+		rect(Costanti.WIDTH - 50,Costanti.HEIGHT - 30,Costanti.WIDTH,30);
+		fill(255);
+		text("SAVE",Costanti.WIDTH - 25,Costanti.HEIGHT-10 );
 	}
-
-
-
+	
+	public void saveImagine() {
+		save("SystemStar.jpg");
+	}
 }
