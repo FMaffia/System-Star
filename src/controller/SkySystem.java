@@ -67,10 +67,10 @@ public class SkySystem extends PApplet {
 			livello = this.calcolaLivello(f.getPath()); System.out.println("path: " + f.getPath() + "  livello = " + livello);
 			
 			if(f.isDirectory()) {
-				raggio = Costanti.RAGGIO + 100;
+				raggio = Costanti.RAGGIO + 150;
 			}
 			else {
-				raggio = Costanti.RAGGIO + 50;
+				raggio = Costanti.RAGGIO + 100;
 			}
 			float x = satellite.getCentroNodo().getX() + ((raggio/livello) * PApplet.cos(angle));
 			float y = satellite.getCentroNodo().getY() + ((raggio/livello) * PApplet.sin(angle));
@@ -94,7 +94,7 @@ public class SkySystem extends PApplet {
 	private int calcolaLivello(String pathString) {
 		int profonditaTOT = this.splitPath(pathString).size();
 		int profondita = profonditaTOT - this.profonditaROOT;
-		return profondita;
+		return profondita + 1;
 	}
 
 	public List<String> splitPath(String pathString){
