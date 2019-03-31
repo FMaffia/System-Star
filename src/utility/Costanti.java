@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Costanti {
 	
-	public static final String PATH = "/Users/Francesca/Desktop/Disegni";
+	public static final String PATH = "/Users/Francesca/Desktop/Cv";
 	
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 700;

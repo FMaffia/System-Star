@@ -90,6 +90,10 @@ public class SkySystem extends PApplet {
 			}
 			float x = satellite.getCentroNodo().getX() + ((raggio / livello) * PApplet.cos(angle+PI/2));
 			float y = satellite.getCentroNodo().getY() + ((raggio / livello) * PApplet.sin(angle+PI/2));
+			
+			float lineaX = satellite.getCentroNodo().getX() + (Costanti.RAGGIO - livello*10)/2 * PApplet.cos(angle+PI/2);
+			float lineaY = satellite.getCentroNodo().getY() + (Costanti.RAGGIO - livello*10)/2 * PApplet.sin(angle+PI/2);
+
 			totFile +=1;
 			satelliteFiglio.setNodo(f);
 			satelliteFiglio.setSottoCartelle(f.listFiles());
@@ -98,11 +102,11 @@ public class SkySystem extends PApplet {
 
 			if (f.isDirectory()) {
 				strokeWeight(1);
-				line(satellite.getCentroNodo().getX(), satellite.getCentroNodo().getY(), satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
+				line(lineaX,lineaY, satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
 				disegnaSatelliti(satelliteFiglio,livello);
 				calcolaCentriSatelliti(satelliteFiglio.getSottoCartelle(),satelliteFiglio);
 			} else {
-				line(satellite.getCentroNodo().getX(), satellite.getCentroNodo().getY(), satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
+				line(lineaX,lineaY, satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
 				disegnaSatelliti(satelliteFiglio,livello);
 			}
 			a = a + periodo;
