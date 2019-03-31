@@ -30,6 +30,7 @@ public class SkySystem extends PApplet {
 
 	public void settings(){
 		size(Costanti.WIDTH, Costanti.HEIGHT);
+
 	}
 
 	public void setup(){
@@ -38,9 +39,10 @@ public class SkySystem extends PApplet {
 		this.sky();
 		this.start(root);
 		disegnaSatelliti(nodoBase,1);
-		System.out.println(totFile);
 	}
-	public void draw() {}
+	public void draw() {
+	titolo();
+	}
 
 	public void start(File rootFile) {
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
@@ -147,8 +149,15 @@ public class SkySystem extends PApplet {
 		}
 	}
 	public void titolo() {
+		stroke(255);
+		strokeWeight(1);
+		line(0,Costanti.HEIGHT-35,Costanti.WIDTH, Costanti.HEIGHT -35);
+		noStroke();
 		fill(0);
-		rect(0,Costanti.HEIGHT - 30,Costanti.WIDTH,Costanti.HEIGHT - 30);
+		rect(0,Costanti.HEIGHT - 30,Costanti.WIDTH,30);
+		fill(255);
+		textAlign(CENTER);
+		text("System Star: " + totFile + " files - 31/03/2019" ,0,Costanti.HEIGHT - 30,Costanti.WIDTH,Costanti.HEIGHT - 30);
 	}
 
 }
