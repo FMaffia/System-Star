@@ -15,6 +15,8 @@ import com.sun.org.apache.bcel.internal.classfile.ConstantInteger;
 import model.Centro;
 import model.Nodo;
 import processing.core.PApplet;
+import processing.core.PFont;
+import processing.event.MouseEvent;
 import utility.Costanti;
 
 public class SkySystem extends PApplet {
@@ -23,7 +25,9 @@ public class SkySystem extends PApplet {
 	Nodo nodoBase = new Nodo();
 	private int  profonditaROOT;
 	private int totFile = 0;
- 
+	PFont font;
+
+
 	public static void main(String[] args) {
 		PApplet.main("controller.SkySystem");
 	}
@@ -35,14 +39,14 @@ public class SkySystem extends PApplet {
 
 	public void setup(){
 		background(0);
+		font = createFont("AlegreyaSans-Thin-20.vlw", 13);
 		this.profonditaROOT = this.splitPath(this.root.getPath()).size();
 		this.sky();
 		this.start(root);
+		titolo();
 		disegnaSatelliti(nodoBase,1);
 	}
-	public void draw() {
-	titolo();
-	}
+	public void draw() {}
 
 	public void start(File rootFile) {
 		Centro centroRoot = new Centro(Costanti.CENTRO_QUADRO_X,Costanti.CENTRO_QUADRO_Y);
@@ -68,26 +72,27 @@ public class SkySystem extends PApplet {
 		for(File f : listaFiles) {
 			Nodo satelliteFiglio = new Nodo();
 			float angle = PApplet.radians(a);
-			
-			livello = this.calcolaLivello(f.getPath()); System.out.println("path: " + f.getPath() + "  livello = " + livello);
-			
+
+			livello = this.calcolaLivello(f.getPath());
+			//System.out.println("path: " + f.getPath() + "  livello = " + livello);
+
 			if(f.isDirectory()) {
-				raggio = Costanti.RAGGIO_ORBITA + 20;
+				raggio = Costanti.RAGGIO_ORBITA + 100;
 			}
 			else {
-				raggio = Costanti.RAGGIO_ORBITA;
+				raggio = Costanti.RAGGIO_ORBITA+50;
 			}
-			float x = satellite.getCentroNodo().getX() + ((raggio / livello) * PApplet.cos(angle));
-			float y = satellite.getCentroNodo().getY() + ((raggio / livello) * PApplet.sin(angle));
-			System.out.println(Costanti.RAGGIO_ORBITA/livello);
+			float x = satellite.getCentroNodo().getX() + ((raggio / livello) * PApplet.cos(angle+PI/2));
+			float y = satellite.getCentroNodo().getY() + ((raggio / livello) * PApplet.sin(angle+PI/2));
 			totFile +=1;
 			satelliteFiglio.setNodo(f);
 			satelliteFiglio.setSottoCartelle(f.listFiles());
 			Centro centroSatellite = new Centro(x,y);
 			satelliteFiglio.setCentroNodo(centroSatellite);
-			
+
 			if (f.isDirectory()) {
-			line(satellite.getCentroNodo().getX(), satellite.getCentroNodo().getY(), satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
+				strokeWeight(1);
+				line(satellite.getCentroNodo().getX(), satellite.getCentroNodo().getY(), satelliteFiglio.getCentroNodo().getX(), satelliteFiglio.getCentroNodo().getY());
 				disegnaSatelliti(satelliteFiglio,livello);
 				calcolaCentriSatelliti(satelliteFiglio.getSottoCartelle(),satelliteFiglio);
 			} else {
@@ -125,15 +130,21 @@ public class SkySystem extends PApplet {
 		textAlign(CENTER,CENTER);
 		textSize(13);
 		fill(255, 255 - 20*livello);
+		if(Costanti.CLEAN == false) {
 		if(nodo.getNodo().isDirectory()) {
 			text(nodo.getNodo().listFiles().length,nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());
 		} else {
 			text(prendiEstenzione(nodo.getNodo()),nodo.getCentroNodo().getX(),nodo.getCentroNodo().getY());			
 		}
+		}
 	}
 
 	private String prendiEstenzione(File file) {
-		return file.getName().substring(file.getName().lastIndexOf("."));
+		String estenzione = "";
+		if(file.getName().contains(".")) {
+			estenzione = file.getName().substring(file.getName().lastIndexOf("."));
+		}
+		return estenzione;
 	}
 
 
@@ -151,13 +162,16 @@ public class SkySystem extends PApplet {
 	public void titolo() {
 		stroke(255);
 		strokeWeight(1);
-		line(0,Costanti.HEIGHT-35,Costanti.WIDTH, Costanti.HEIGHT -35);
+		line(0,Costanti.HEIGHT-30,Costanti.WIDTH, Costanti.HEIGHT -30);
 		noStroke();
 		fill(0);
 		rect(0,Costanti.HEIGHT - 30,Costanti.WIDTH,30);
 		fill(255);
 		textAlign(CENTER);
-		text("System Star: " + totFile + " files - 31/03/2019" ,0,Costanti.HEIGHT - 30,Costanti.WIDTH,Costanti.HEIGHT - 30);
+		textFont(font);
+		text("System Star: " + totFile + " files - 31/03/2019" ,0,Costanti.HEIGHT - 20,Costanti.WIDTH,Costanti.HEIGHT - 20);
 	}
+
+
 
 }
